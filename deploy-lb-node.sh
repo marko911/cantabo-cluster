@@ -36,8 +36,15 @@ mkdir -p /home/subtensor/node1/{data,logs}
 mkdir -p /etc/haproxy
 chmod -R 755 /home/subtensor
 
+# Generate secure auth token
+AUTH_TOKEN=$(openssl rand -hex 32)
+echo "Generated auth token: $AUTH_TOKEN"
+echo "IMPORTANT: Save this token - you'll need it for API requests!"
+echo "$AUTH_TOKEN" > /home/subtensor/auth-token.txt
+chmod 600 /home/subtensor/auth-token.txt
+
 # Create HAProxy configuration
-echo "Creating HAProxy configuration..."
+echo "Creating HAProxy configuration with auth..."
 cat > /etc/haproxy/haproxy.cfg << EOF
 global
     maxconn 10000
@@ -55,6 +62,10 @@ defaults
 
 frontend subtensor_rpc_frontend
     bind *:80
+    
+    # Check for Authorization header with correct token
+    http-request deny unless { req.hdr(Authorization) -m str "Bearer $AUTH_TOKEN" }
+    
     default_backend rpc_nodes
 
 backend rpc_nodes
@@ -70,6 +81,10 @@ backend rpc_nodes
 
 frontend subtensor_ws_frontend
     bind *:8080
+    
+    # WebSocket auth - check for token in Sec-WebSocket-Protocol header
+    http-request deny unless { req.hdr(Sec-WebSocket-Protocol) -m str "$AUTH_TOKEN" }
+    
     default_backend ws_nodes
 
 backend ws_nodes
@@ -83,10 +98,17 @@ backend ws_nodes
 
 frontend stats
     bind *:8404
+    
+    # Stats page auth
+    http-request auth unless { http_auth(statsusers) }
+    
     stats enable
     stats uri /stats
     stats refresh 30s
     stats admin if TRUE
+
+userlist statsusers
+    user admin password $(openssl passwd -1 admin$AUTH_TOKEN)
 EOF
 
 # Create Docker Compose configuration
@@ -224,11 +246,24 @@ echo "VPS 2 Node 1: http://$VPS2_IP:9933"
 echo "VPS 2 Node 2: http://$VPS2_IP:9934"
 
 echo ""
+echo "=== Authentication Details ==="
+echo "Auth token saved to: /home/subtensor/auth-token.txt"
+echo "Current token: $(cat /home/subtensor/auth-token.txt)"
+
+echo ""
 echo "=== Test Commands ==="
-echo "Test load balancer: curl -X POST -H 'Content-Type: application/json' -d '{\"id\":1,\"jsonrpc\":\"2.0\",\"method\":\"system_health\"}' http://$VPS3_IP/"
-echo "Check HAProxy stats: curl http://$VPS3_IP:8404/stats"
+echo "Test load balancer (with auth): curl -X POST -H 'Content-Type: application/json' -H 'Authorization: Bearer $(cat /home/subtensor/auth-token.txt)' -d '{\"id\":1,\"jsonrpc\":\"2.0\",\"method\":\"system_health\"}' http://$VPS3_IP/"
+echo "Check HAProxy stats (will prompt for login - user: admin, pass: admin<token>):"
+echo "  curl http://$VPS3_IP:8404/stats"
 echo "View node logs: docker logs -f archive-node-1"
 echo "View LB logs: docker logs -f subtensor-loadbalancer"
 
 echo ""
-echo "Setup complete! Load balancer is distributing requests across all 5 nodes."
+echo "=== Security Notes ==="
+echo "- RPC requires: Authorization: Bearer <token>"
+echo "- WebSocket requires: Sec-WebSocket-Protocol: <token>"
+echo "- Stats page requires: username 'admin', password 'admin<token>'"
+echo "- Token is saved in /home/subtensor/auth-token.txt (readable only by root)"
+
+echo ""
+echo "Setup complete! Load balancer now has token authentication."
