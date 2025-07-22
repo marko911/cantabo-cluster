@@ -31,6 +31,12 @@ echo "Creating storage directories..."
 mkdir -p /home/subtensor/{node1,node2}/{data,logs}
 chmod -R 755 /home/subtensor
 
+# Test the Docker image first
+echo "Testing Docker image..."
+docker run --rm opentensor/subtensor:latest --help || echo "Direct run failed, trying with entrypoint override"
+docker run --rm --entrypoint="" opentensor/subtensor:latest ls -la /usr/local/bin/ || echo "Entrypoint override failed"
+docker run --rm --entrypoint="node-subtensor" opentensor/subtensor:latest --help || echo "Direct node-subtensor failed"
+
 # Create Docker Compose configuration
 echo "Creating Docker Compose configuration..."
 cat > /root/docker-compose.yml << 'EOF'
@@ -38,31 +44,21 @@ version: '3.8'
 
 services:
   subtensor-1:
-    image: opentensor/subtensor:latest
+    image: ghcr.io/opentensor/subtensor:latest
     container_name: archive-node-1
-    hostname: archive-node-1
     restart: unless-stopped
     command:
       - "--base-path=/data"
-      - "--chain=finney"
-      - "--pruning=archive"
+      - "--chain=./chainspecs/raw_spec_finney.json"
       - "--rpc-external"
       - "--rpc-cors=all"
-      - "--rpc-methods=safe"
-      - "--rpc-max-connections=10000"
-      - "--ws-external"
-      - "--ws-max-connections=10000"
-      - "--in-peers=500"
-      - "--out-peers=500"
-      - "--db-cache=8192"
-      - "--state-cache-size=2147483648"
-      - "--max-runtime-instances=8"
-      - "--sync=warp"
+      - "--no-mdns"
+      - "--bootnodes=/dns/bootnode.finney.chain.opentensor.ai/tcp/30333/ws/p2p/12D3KooWRwbMb85RWnT8DSXSYMWQtuDwh4LJzndoRrTDotTR5gDC"
+      - "--pruning=archive"
       - "--port=30333"
       - "--rpc-port=9933"
       - "--ws-port=9944"
-      - "--prometheus-external"
-      - "--prometheus-port=9615"
+      - "--rpc-max-connections=10000"
     volumes:
       - /home/subtensor/node1/data:/data
       - /home/subtensor/node1/logs:/var/log/subtensor
@@ -88,31 +84,21 @@ services:
       retries: 3
 
   subtensor-2:
-    image: opentensor/subtensor:latest
+    image: ghcr.io/opentensor/subtensor:latest
     container_name: archive-node-2
-    hostname: archive-node-2
     restart: unless-stopped
     command:
       - "--base-path=/data"
-      - "--chain=finney"
-      - "--pruning=archive"
+      - "--chain=./chainspecs/raw_spec_finney.json"
       - "--rpc-external"
       - "--rpc-cors=all"
-      - "--rpc-methods=safe"
-      - "--rpc-max-connections=10000"
-      - "--ws-external"
-      - "--ws-max-connections=10000"
-      - "--in-peers=500"
-      - "--out-peers=500"
-      - "--db-cache=8192"
-      - "--state-cache-size=2147483648"
-      - "--max-runtime-instances=8"
-      - "--sync=warp"
+      - "--no-mdns"
+      - "--bootnodes=/dns/bootnode.finney.chain.opentensor.ai/tcp/30333/ws/p2p/12D3KooWRwbMb85RWnT8DSXSYMWQtuDwh4LJzndoRrTDotTR5gDC"
+      - "--pruning=archive"
       - "--port=30334"
       - "--rpc-port=9934"
       - "--ws-port=9945"
-      - "--prometheus-external"
-      - "--prometheus-port=9616"
+      - "--rpc-max-connections=10000"
     volumes:
       - /home/subtensor/node2/data:/data
       - /home/subtensor/node2/logs:/var/log/subtensor
