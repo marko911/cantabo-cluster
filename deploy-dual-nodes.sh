@@ -155,7 +155,7 @@ systemctl enable subtensor-compose
 
 # Pull images first to avoid timeout
 echo "Pulling Docker images..."
-docker pull opentensor/subtensor:latest
+docker pull ghcr.io/opentensor/subtensor:latest
 
 # Start the services
 echo "Starting Subtensor archive nodes..."
