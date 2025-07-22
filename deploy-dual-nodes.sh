@@ -31,12 +31,6 @@ echo "Creating storage directories..."
 mkdir -p /home/subtensor/{node1,node2}/{data,logs}
 chmod -R 755 /home/subtensor
 
-# Test the Docker image first
-echo "Testing Docker image..."
-docker run --rm opentensor/subtensor:latest --help || echo "Direct run failed, trying with entrypoint override"
-docker run --rm --entrypoint="" opentensor/subtensor:latest ls -la /usr/local/bin/ || echo "Entrypoint override failed"
-docker run --rm --entrypoint="node-subtensor" opentensor/subtensor:latest --help || echo "Direct node-subtensor failed"
-
 # Create Docker Compose configuration
 echo "Creating Docker Compose configuration..."
 cat > /root/docker-compose.yml << 'EOF'
