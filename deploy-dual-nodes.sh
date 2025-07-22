@@ -43,7 +43,6 @@ services:
     hostname: archive-node-1
     restart: unless-stopped
     command: >
-      subtensor
       --base-path=/data
       --chain=finney
       --pruning=archive
@@ -97,7 +96,6 @@ services:
     hostname: archive-node-2
     restart: unless-stopped
     command: >
-      subtensor
       --base-path=/data
       --chain=finney
       --pruning=archive
