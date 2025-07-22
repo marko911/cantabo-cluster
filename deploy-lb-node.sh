@@ -96,35 +96,23 @@ version: '3.8'
 
 services:
   subtensor-1:
-    image: opentensor/subtensor:latest
+    image: ghcr.io/opentensor/subtensor:latest
     container_name: archive-node-1
     hostname: archive-node-1
     restart: unless-stopped
-    command: >
-      subtensor
-      --base-path=/data
-      --chain=finney
-      --pruning=archive
-      --state-pruning=archive
-      --rpc-external
-      --rpc-cors=all
-      --rpc-methods=safe
-      --rpc-max-connections=10000
-      --rpc-rate-limit=0
-      --rpc-rate-limit-whitelisted-ips=0.0.0.0/0
-      --ws-external
-      --ws-max-connections=10000
-      --in-peers=500
-      --out-peers=500
-      --db-cache=8192
-      --state-cache-size=2147483648
-      --max-runtime-instances=8
-      --sync=warp
-      --port=30333
-      --rpc-port=9933
-      --ws-port=9944
-      --prometheus-external
-      --prometheus-port=9615
+    entrypoint: ["node-subtensor"]
+    command:
+      - "--base-path=/data"
+      - "--chain=./chainspecs/raw_spec_finney.json"
+      - "--rpc-external"
+      - "--rpc-cors=all"
+      - "--no-mdns"
+      - "--bootnodes=/dns/bootnode.finney.chain.opentensor.ai/tcp/30333/ws/p2p/12D3KooWRwbMb85RWnT8DSXSYMWQtuDwh4LJzndoRrTDotTR5gDC"
+      - "--pruning=archive"
+      - "--port=30333"
+      - "--rpc-port=9933"
+      - "--rpc-max-connections=10000"
+      - "--rpc-rate-limit-whitelisted-ips=0.0.0.0/0"
     volumes:
       - /home/subtensor/node1/data:/data
       - /home/subtensor/node1/logs:/var/log/subtensor
@@ -203,7 +191,7 @@ systemctl enable subtensor-compose
 
 # Pull images
 echo "Pulling Docker images..."
-docker pull opentensor/subtensor:latest
+docker pull ghcr.io/opentensor/subtensor:latest
 docker pull haproxy:2.8-alpine
 
 # Start services
