@@ -42,30 +42,27 @@ services:
     container_name: archive-node-1
     hostname: archive-node-1
     restart: unless-stopped
-    command: >
-      --base-path=/data
-      --chain=finney
-      --pruning=archive
-      --state-pruning=archive
-      --rpc-external
-      --rpc-cors=all
-      --rpc-methods=safe
-      --rpc-max-connections=10000
-      --rpc-rate-limit=0
-      --rpc-rate-limit-whitelisted-ips=0.0.0.0/0
-      --ws-external
-      --ws-max-connections=10000
-      --in-peers=500
-      --out-peers=500
-      --db-cache=8192
-      --state-cache-size=2147483648
-      --max-runtime-instances=8
-      --sync=warp
-      --port=30333
-      --rpc-port=9933
-      --ws-port=9944
-      --prometheus-external
-      --prometheus-port=9615
+    command:
+      - "--base-path=/data"
+      - "--chain=finney"
+      - "--pruning=archive"
+      - "--rpc-external"
+      - "--rpc-cors=all"
+      - "--rpc-methods=safe"
+      - "--rpc-max-connections=10000"
+      - "--ws-external"
+      - "--ws-max-connections=10000"
+      - "--in-peers=500"
+      - "--out-peers=500"
+      - "--db-cache=8192"
+      - "--state-cache-size=2147483648"
+      - "--max-runtime-instances=8"
+      - "--sync=warp"
+      - "--port=30333"
+      - "--rpc-port=9933"
+      - "--ws-port=9944"
+      - "--prometheus-external"
+      - "--prometheus-port=9615"
     volumes:
       - /home/subtensor/node1/data:/data
       - /home/subtensor/node1/logs:/var/log/subtensor
@@ -95,30 +92,27 @@ services:
     container_name: archive-node-2
     hostname: archive-node-2
     restart: unless-stopped
-    command: >
-      --base-path=/data
-      --chain=finney
-      --pruning=archive
-      --state-pruning=archive
-      --rpc-external
-      --rpc-cors=all
-      --rpc-methods=safe
-      --rpc-max-connections=10000
-      --rpc-rate-limit=0
-      --rpc-rate-limit-whitelisted-ips=0.0.0.0/0
-      --ws-external
-      --ws-max-connections=10000
-      --in-peers=500
-      --out-peers=500
-      --db-cache=8192
-      --state-cache-size=2147483648
-      --max-runtime-instances=8
-      --sync=warp
-      --port=30334
-      --rpc-port=9934
-      --ws-port=9945
-      --prometheus-external
-      --prometheus-port=9616
+    command:
+      - "--base-path=/data"
+      - "--chain=finney"
+      - "--pruning=archive"
+      - "--rpc-external"
+      - "--rpc-cors=all"
+      - "--rpc-methods=safe"
+      - "--rpc-max-connections=10000"
+      - "--ws-external"
+      - "--ws-max-connections=10000"
+      - "--in-peers=500"
+      - "--out-peers=500"
+      - "--db-cache=8192"
+      - "--state-cache-size=2147483648"
+      - "--max-runtime-instances=8"
+      - "--sync=warp"
+      - "--port=30334"
+      - "--rpc-port=9934"
+      - "--ws-port=9945"
+      - "--prometheus-external"
+      - "--prometheus-port=9616"
     volumes:
       - /home/subtensor/node2/data:/data
       - /home/subtensor/node2/logs:/var/log/subtensor
