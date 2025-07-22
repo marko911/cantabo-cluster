@@ -52,8 +52,9 @@ services:
       - "--pruning=archive"
       - "--port=30333"
       - "--rpc-port=9933"
-      - "--ws-port=9944"
       - "--rpc-max-connections=10000"
+      - "--rpc-rate-limit=0"
+      - "--rpc-rate-limit-whitelisted-ips=0.0.0.0/0"
     volumes:
       - /home/subtensor/node1/data:/data
       - /home/subtensor/node1/logs:/var/log/subtensor
@@ -93,8 +94,9 @@ services:
       - "--pruning=archive"
       - "--port=30334"
       - "--rpc-port=9934"
-      - "--ws-port=9945"
       - "--rpc-max-connections=10000"
+      - "--rpc-rate-limit=0"
+      - "--rpc-rate-limit-whitelisted-ips=0.0.0.0/0"
     volumes:
       - /home/subtensor/node2/data:/data
       - /home/subtensor/node2/logs:/var/log/subtensor
