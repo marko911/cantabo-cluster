@@ -53,7 +53,6 @@ services:
       - "--port=30333"
       - "--rpc-port=9933"
       - "--rpc-max-connections=10000"
-      - "--rpc-rate-limit=0"
       - "--rpc-rate-limit-whitelisted-ips=0.0.0.0/0"
     volumes:
       - /home/subtensor/node1/data:/data
@@ -95,7 +94,6 @@ services:
       - "--port=30334"
       - "--rpc-port=9934"
       - "--rpc-max-connections=10000"
-      - "--rpc-rate-limit=0"
       - "--rpc-rate-limit-whitelisted-ips=0.0.0.0/0"
     volumes:
       - /home/subtensor/node2/data:/data
