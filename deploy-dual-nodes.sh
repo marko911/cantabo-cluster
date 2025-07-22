@@ -47,6 +47,7 @@ services:
     image: ghcr.io/opentensor/subtensor:latest
     container_name: archive-node-1
     restart: unless-stopped
+    entrypoint: ["node-subtensor"]
     command:
       - "--base-path=/data"
       - "--chain=./chainspecs/raw_spec_finney.json"
@@ -87,6 +88,7 @@ services:
     image: ghcr.io/opentensor/subtensor:latest
     container_name: archive-node-2
     restart: unless-stopped
+    entrypoint: ["node-subtensor"]
     command:
       - "--base-path=/data"
       - "--chain=./chainspecs/raw_spec_finney.json"
